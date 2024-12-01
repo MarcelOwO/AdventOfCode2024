@@ -2,7 +2,7 @@ using AOC.Inputs;
 using AOC.Solvers.Interfaces;
 using AOC.Solvers.Solvers;
 
-namespace AOC.Day1;
+namespace AOC.Solvers;
 
 public class SolverController
 {
