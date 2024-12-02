@@ -6,7 +6,7 @@ namespace AOC.Solvers;
 
 public class SolverController
 {
-    private readonly Lazy<InputController> _inputController = new(() => new InputController());
+    private readonly InputController _inputController = new InputController();
 
     private readonly Dictionary<int, Lazy<ISolver>> _solvers = new()
     {
@@ -37,9 +37,13 @@ public class SolverController
         { 25, new Lazy<ISolver>(() => new Day25Solver()) }
     };
 
-    public async Task<string> SolveAsync(int day)
+    public async Task SolveAsync(int day)
     {
-        var input = _inputController.Value[day];
-        return await _solvers[day].Value.SolveAsync(input);
+        var input = _inputController[day];
+
+        var result1 = await _solvers[day].Value.SolvePart1Async(input);
+        var result2 = await _solvers[day].Value.SolvePart2Async(input);
+        
+        Console.WriteLine($"Day {day} - Part 1: {result1} - Part2: {result2}");
     }
 }

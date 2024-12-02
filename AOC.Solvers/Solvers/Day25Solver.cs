@@ -6,4 +6,14 @@ public class Day25Solver : ISolver
     {
         throw new NotImplementedException();
     }
+
+    public Task<string> SolvePart1Async(StreamReader input)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<string> SolvePart2Async(StreamReader input)
+    {
+        throw new NotImplementedException();
+    }
 }
