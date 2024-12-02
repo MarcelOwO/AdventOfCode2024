@@ -4,6 +4,6 @@ Console.WriteLine("Starting");
 
 var solver = new SolverController();
 
-await solver.SolveAsync(1);
+await solver.SolveAsync(2);
 
 Console.WriteLine("Finished");

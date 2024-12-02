@@ -11,7 +11,7 @@ public class SolverController
     private readonly Dictionary<int, Lazy<ISolver>> _solvers = new()
     {
         { 1, new Lazy<ISolver>(() => new Day1Solver()) },
-        { 2, new Lazy<ISolver>(() => new Day1Solver()) },
+        { 2, new Lazy<ISolver>(() => new Day2Solver()) },
         { 3, new Lazy<ISolver>(() => new Day3Solver()) },
         { 4, new Lazy<ISolver>(() => new Day4Solver()) },
         { 5, new Lazy<ISolver>(() => new Day5Solver()) },

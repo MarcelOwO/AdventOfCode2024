@@ -29,6 +29,7 @@ public class InputController
         {
             try
             {
+                
                 return _inputs[day];
             }
             catch (Exception e) when (e is KeyNotFoundException)
