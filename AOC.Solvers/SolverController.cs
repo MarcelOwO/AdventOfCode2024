@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using AOC.Inputs;
 using AOC.Solvers.Interfaces;
 using AOC.Solvers.Solvers;
@@ -39,11 +40,16 @@ public class SolverController
 
     public async Task SolveAsync(int day)
     {
-        var input = _inputController[day];
+        Stopwatch sw = new();
 
+        sw.Start();
+        var input = _inputController[day];
         var result1 = await _solvers[day].Value.SolvePart1Async(input);
+        var timePart1 = sw.ElapsedMilliseconds;
         var result2 = await _solvers[day].Value.SolvePart2Async(input);
-        
+        var timePart2 = sw.ElapsedMilliseconds;
+
+        Console.WriteLine($"Part1 used: {timePart1}ms and Part2 used: {timePart2}ms for day {day}");
         Console.WriteLine($"Day {day} - Part 1: {result1} - Part2: {result2}");
     }
 }
