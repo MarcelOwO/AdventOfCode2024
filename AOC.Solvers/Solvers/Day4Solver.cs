@@ -137,6 +137,7 @@ public class Day4Solver : ISolver
 
         var topLeft = input[x - 1][y - 1];
 
+        
         if (topLeft == 'M')
         {
             var topRight = input[x - 1][y + 1];
