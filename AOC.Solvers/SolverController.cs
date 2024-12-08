@@ -52,4 +52,5 @@ public class SolverController
         Console.WriteLine($"Part1 used: {timePart1}ms and Part2 used: {timePart2}ms for day {day}");
         Console.WriteLine($"Day {day} - Part 1: {result1} - Part2: {result2}");
     }
+
 }

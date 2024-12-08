@@ -4,12 +4,11 @@ Console.WriteLine("Starting");
 
 var solver = new SolverController();
 
-await solver.SolveAsync(7);
-
+await solver.SolveAsync(8);
 
 /*
     List<Task> tasks = new();
-Enumerable.Range(1, 4).ToList().ForEach(x =>
+Enumerable.Range(1, 24).ToList().ForEach(x =>
 {
     var task =  solver.SolveAsync(x);
     tasks.Add(task);
