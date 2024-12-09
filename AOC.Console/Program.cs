@@ -4,7 +4,7 @@ Console.WriteLine("Starting");
 
 var solver = new SolverController();
 
-await solver.SolveAsync(8);
+await solver.SolveAsync(9);
 
 /*
     List<Task> tasks = new();
