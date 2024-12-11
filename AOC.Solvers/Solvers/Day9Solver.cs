@@ -109,34 +109,65 @@ public class Day9Solver : ISolver
             diskArray.Add(newList);
         }
 
-
-        for (var i = diskArray.Count - 1; i >= 0; i -= 2)
+        var complete = diskArray.SelectMany(x => x).ToList();
+        var fileIndex = complete.Max();
+        
+        while (fileIndex >= 0)
         {
-            var fileToMove = diskArray[i];
-            var fileSize = fileToMove.Count;
+            var (lastFileBegin, lastFileSize) = GetLastFile(ref fileIndex, complete);
 
-            for (var j = 1; j < diskArray.Count; j += 2)
+            var freeSpaceBegin = FindFreeSpace(lastFileSize, complete, lastFileBegin);
+            if (freeSpaceBegin == -1)
             {
-                var freeSpace = diskArray[j];
-                if (fileSize > freeSpace.Count(x => x == -1)) continue;
+                continue;
+            }
 
-                var first = freeSpace.FindIndex(x => x == -1);
+            MoveFile(freeSpaceBegin, lastFileBegin, lastFileSize, complete);
+        }
 
-                for (var k = 0; k < fileSize; k++)
-                {
-                    freeSpace[first + k] = fileToMove[k];
-                    fileToMove[k] = -1;
-                }
+        var c = complete.Select((x, i) => x == -1 ? 0 : (long)x * i).Sum();
 
-                break;
+        return c.ToString();
+    }
 
+    private void MoveFile(int freeSpaceBegin, int lastFileBegin, int lastFileSize, List<int> complete)
+    {
+        for (int i = 0; i < lastFileSize; i++)
+        {
+            complete[freeSpaceBegin + i] = complete[lastFileBegin + i];
+            complete[lastFileBegin + i] = -1;
+        }
+    }
+
+    private int FindFreeSpace(int lastFileSize, List<int> complete, int bound = 0)
+    {
+        var current = 0;
+        for (int i = 0; i < bound; i++)
+        {
+            if (complete[i] != -1)
+            {
+                current = 0;
+            }
+            else
+            {
+                current++;
+            }
+
+            if (current == lastFileSize)
+            {
+                return i - lastFileSize + 1;
             }
         }
 
-        var newComplete = diskArray.SelectMany(x => x).ToList();
+        return -1;
+    }
 
-        var c = newComplete.Select((x, i) => x == -1 ? 0 : (long)x * i).Sum();
-
-        return c.ToString();
+    private (int lastFileBegin, int lastFileSize) GetLastFile(ref int fileIndex, List<int> complete)
+    {
+        var copy = fileIndex;
+        var first = complete.FindIndex(x => x == copy);
+        var last = complete.FindLastIndex(x => x == copy);
+        fileIndex--;
+        return (first, last - first + 1);
     }
 }
