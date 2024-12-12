@@ -3,112 +3,75 @@ using AOC.Solvers.Interfaces;
 
 public class Day11Solver : ISolver
 {
-    ConcurrentDictionary<ulong, List<ulong>> dict = [];
-
+    Dictionary<uint, List<uint>> _cache = new();
 
     public async Task<string> SolvePart1Async(StreamReader input)
     {
         var data = await input.ReadToEndAsync();
-        var list = data.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(ulong.Parse).ToList();
-        var steps = 25;
+        var list = data.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse).ToList();
+        const int steps = 25;
 
-
-        for (var i = 0; i < steps; i++)
-        {
-            Console.WriteLine(i);
-
-            ConcurrentBag<ulong> bag = new();
-
-            Parallel.ForEach(list, stone =>
-            {
-                if (dict.TryGetValue(stone, out var value))
-                {
-                    value.ForEach(bag.Add);
-                }
-                else
-                {
-                    if (stone == 0)
-                    {
-                        bag.Add(1);
-                        dict[stone] = [1];
-                    }
-                    else if (stone.ToString().Length % 2 == 0)
-                    {
-                        var val = stone.ToString();
-                        var length = val.Length / 2;
-                        var first = ulong.Parse(val[..(length)]);
-                        var last = ulong.Parse(val.Substring(length, length));
-                        dict[stone] = [first, last];
-                        bag.Add(first);
-                        bag.Add(last);
-                    }
-                    else
-                    {
-                        dict[stone] = [stone * 2024];
-                        bag.Add(stone * 2024);
-                    }
-                }
-            });
-
-
-            list = bag.ToList();
-        }
-
-        Console.WriteLine("/////////////////////////////////");
-        return list.Count.ToString();
+        return (await GetCount(steps, list)).ToString();
     }
-
 
     public async Task<string> SolvePart2Async(StreamReader input)
     {
         input.BaseStream.Seek(0, SeekOrigin.Begin);
+
         var data = await input.ReadToEndAsync();
-        var list = data.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(ulong.Parse).ToList();
-        var steps = 75;
+        var list = data.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse).ToList();
+        const int steps = 75;
+
+        return (await GetCount(steps, list)).ToString();
+    }
 
 
+    private async Task<int> GetCount(int steps, List<uint> list)
+    {
         for (var i = 0; i < steps; i++)
         {
-            Console.WriteLine(i);
+            Console.WriteLine($"Step {i}");
 
-            ConcurrentBag<ulong> bag = [];
-
-            Parallel.ForEach(list, stone =>
+            for (int j = 0; j < list.Count; j++)
             {
-                if (dict.TryGetValue(stone, out var value))
+                var stone = list[j];
+
+                if (_cache.TryGetValue(stone, out var value))
                 {
-                    value.ForEach(bag.Add);
-                }
-                else
-                {
-                    if (stone == 0)
+                    if (value.Count > 1)
                     {
-                        bag.Add(1);
-                        dict[stone] = [1];
-                    }
-                    else if (stone.ToString().Length % 2 == 0)
-                    {
-                        var val = stone.ToString();
-                        var length = val.Length / 2;
-                        var first = ulong.Parse(val[..(length)]);
-                        var last = ulong.Parse(val.Substring(length, length));
-                        dict[stone] = [first, last];
-                        bag.Add(first);
-                        bag.Add(last);
+                        list[j] = value[0];
+                        list.Add(value[1]);
                     }
                     else
                     {
-                        dict[stone] = [stone * 2024];
-                        bag.Add(stone * 2024);
+                        list[j] = value[0];
                     }
                 }
-            });
 
+                if (stone == 0)
+                {
+                    _cache[stone] = [0];
+                    list[j] = 1;
+                }
+                else if (stone.ToString().Length % 2 == 0)
+                {
+                    var str = stone.ToString();
+                    var length = str.Length / 2;
 
-            list = bag.ToList();
+                    var first = uint.Parse(str.Substring(0, length));
+                    var second = uint.Parse(str.Substring(length, length));
+                    list[j] = first;
+                    list.Add(second);
+                }
+                else
+                {
+                    list[j] *= 2024;
+                }
+            }
         }
 
-        Console.WriteLine("/////////////////////////////////");
-        return list.Count.ToString();
+
+        return list.Count;
     }
 }

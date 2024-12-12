@@ -4,7 +4,7 @@ Console.WriteLine("Starting");
 
 var solver = new SolverController();
 
-await solver.SolveAsync(11);
+await solver.SolveAsync(12);
 
 
 /*
