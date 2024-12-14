@@ -1,17 +1,20 @@
-using System.Collections.Concurrent;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 using AOC.Solvers.Interfaces;
+
+namespace AOC.Solvers.Solvers;
 
 public class Day11Solver : ISolver
 {
-    Dictionary<uint, List<uint>> _cache = new();
+    private readonly Dictionary<(BigInteger stone, BigInteger steps), BigInteger> _cache = [];
 
     public async Task<string> SolvePart1Async(StreamReader input)
     {
         var data = await input.ReadToEndAsync();
-        var list = data.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse).ToList();
+        var list = data.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(BigInteger.Parse).ToList();
         const int steps = 25;
 
-        return (await GetCount(steps, list)).ToString();
+        return GetCount(steps, list).ToString();
     }
 
     public async Task<string> SolvePart2Async(StreamReader input)
@@ -19,59 +22,51 @@ public class Day11Solver : ISolver
         input.BaseStream.Seek(0, SeekOrigin.Begin);
 
         var data = await input.ReadToEndAsync();
-        var list = data.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(uint.Parse).ToList();
+        var list = data.Split(" ", StringSplitOptions.RemoveEmptyEntries).Select(BigInteger.Parse).ToList();
         const int steps = 75;
 
-        return (await GetCount(steps, list)).ToString();
+        return GetCount(steps, list).ToString();
     }
 
-
-    private async Task<int> GetCount(int steps, List<uint> list)
+    private BigInteger GetCount(int steps, List<BigInteger> stones)
     {
-        for (var i = 0; i < steps; i++)
+        if (steps == 0)
         {
-            Console.WriteLine($"Step {i}");
+            return stones.Count;
+        }
 
-            for (int j = 0; j < list.Count; j++)
+        BigInteger count = 0;
+
+        foreach (var stone in stones)
+        {
+            if (_cache.TryGetValue((stone, steps), out var cacheCount))
             {
-                var stone = list[j];
-
-                if (_cache.TryGetValue(stone, out var value))
-                {
-                    if (value.Count > 1)
-                    {
-                        list[j] = value[0];
-                        list.Add(value[1]);
-                    }
-                    else
-                    {
-                        list[j] = value[0];
-                    }
-                }
-
-                if (stone == 0)
-                {
-                    _cache[stone] = [0];
-                    list[j] = 1;
-                }
-                else if (stone.ToString().Length % 2 == 0)
-                {
-                    var str = stone.ToString();
-                    var length = str.Length / 2;
-
-                    var first = uint.Parse(str.Substring(0, length));
-                    var second = uint.Parse(str.Substring(length, length));
-                    list[j] = first;
-                    list.Add(second);
-                }
-                else
-                {
-                    list[j] *= 2024;
-                }
+                count += cacheCount;
+            }
+            else
+            {
+                var result = GetCount(steps - 1, Blink(stone));
+                count += result;
+                _cache.Add((stone, steps), result);
             }
         }
 
+        return count;
+    }
 
-        return list.Count;
+
+    private List<BigInteger> Blink(BigInteger stone)
+    {
+        if (stone == 0)
+        {
+            return [1];
+        }
+
+        var length = stone.ToString().Length;
+
+        if (length % 2 != 0) return [stone * 2024];
+
+        var divider = BigInteger.Pow(10, length / 2);
+        return [stone / divider, stone % divider];
     }
 }
